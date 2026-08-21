@@ -1,0 +1,37 @@
+.git/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+.Python
+
+# Virtual Environment - IMPORTANT!
+venv/
+env/
+.env
+ENV/
+.venv/
+uv.lock
+requirements.txt
+
+# Pyenv
+.python-version
+
+# Data files - DO NOT COMMIT!
+data/
+*.csv
+*.parquet
+*.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+*./logs
+logs/
