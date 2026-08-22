@@ -94,6 +94,8 @@ def extract_video_data(video_ids, api_key, maxResults):
                     "viewCount": statistics.get("viewCount", None),
                     "likeCount": statistics.get("likeCount", None),
                     "commentCount": statistics.get("commentCount", None),
+                    "channelTitle": snippet["channelTitle"],
+                    "channelId": snippet["channelId"],
                 }
 
                 extracted_data.append(video_data)

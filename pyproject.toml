@@ -14,14 +14,13 @@ dependencies = [
     #--------------------------------------------------------
     # AIRFLOW PROVIDERS - Extensões necessárias para Airflow
     #--------------------------------------------------------
-    "apache-airflow-providers-postgres>=5.7.0,<6.0.0",
-    "apache-airflow-providers-celery>=3.3.0,<4.0.0",
+    "apache-airflow-providers-postgres",
+    "apache-airflow-providers-celery",
 
     #--------------------------------------------------------
     # HTTP & API requests - Para comunicação com Spotify API
     #--------------------------------------------------------
     "requests>=2.31.0,<3.0.0",
-    "urllib3>=1.26.0,<2.0.0",
 
     #--------------------------------------------------------------------
     # ENVIRONMENT & CONFIGURATION - To manage environment variables
@@ -35,15 +34,6 @@ dependencies = [
     "pytz==2023.3",
     "pendulum>=2.1.2,<3.0.0",
 
-    #--------------------------------------------------------------------
-    # REDIS - Message broker para Celery (CeleryExecutor)
-    #--------------------------------------------------------------------
-    "redis>=4.5.0,<6.0.0",
-
-    #--------------------------------------------------------------------
-    # CELERY - Task queue para execução distribuida
-    #--------------------------------------------------------------------
-    "celery>=5.2.0,<6.0.0",
 
     #--------------------------------------------------------------------
     #DATABASE DRIVERS - Drivers para conexão com PostgreSQL
@@ -57,21 +47,9 @@ dependencies = [
     #--------------------------------------------------------------------
     # typing-extensions - Usually built in Airflow, but explicit declaration works better
 
-    #-------------------------------------------------------------------
-    # SECURITY & ENCODING - Essential Security Dependencies
-    #-------------------------------------------------------------------
-    "certifi>=2023.7.22",
-    "charset-normalizer>=3.0.0,<4.0.0",
-    "idna>=3.4",
 
 ]
 
-[project.optional-dependencies]
-dev = [
-    "ipython>=8.18.0",
-    "jupyter>=1.0.0",
-    "ipykernel<=7.2.0"
-]
 
 [build-system]
 requires = ["hatchling"]
@@ -82,5 +60,7 @@ packages = ["src/utils"]
 
 [dependency-groups]
 dev = [
+    "ipython>=8.18.0",
+    "jupyter>=1.0.0",
     "ipykernel>=7.2.0",
 ]
