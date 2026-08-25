@@ -33,6 +33,8 @@ RUN /bin/uv pip install \
     --system \
     -r requirements.txt
 
+RUN /bin/uv pip install --no-cache-dir --system -e .
+
 USER airflow
 
 COPY --chown=airflow:root dbt/ /opt/airflow/dbt/

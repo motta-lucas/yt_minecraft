@@ -93,6 +93,7 @@ x-airflow-common:
     POSTGRES_CONN_HOST: ${POSTGRES_CONN_HOST}
     POSTGRES_CONN_PORT: ${POSTGRES_CONN_PORT}
     DBT_TARGET: ${DBT_TARGET}
+    PYTHONPATH: /opt/airflow/src
   volumes:
     - ./config:/opt/airflow/config
     - ./dags:/opt/airflow/dags

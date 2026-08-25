@@ -48,10 +48,10 @@ with DAG(
     extract_data = dag_extract_video_data(video_ids)
     save_to_json_task = dag_save_to_json(extract_data)
 
-    trigger_update_db = TriggerDagRunOperator(
-        task_id="trigger_update_db",
-        trigger_dag_id="update_db",
-    )
+    # trigger_update_db = TriggerDagRunOperator(
+    # task_id="trigger_update_db",
+    # trigger_dag_id="update_db",
+    # )
 
     # Define dependencies
 

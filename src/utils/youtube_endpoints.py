@@ -106,7 +106,13 @@ def extract_video_data(video_ids, api_key, maxResults):
 
 
 def save_to_json(extracted_data, output_dir):
-    file_path = Path(output_dir) / f"yt_data_{date.today()}.json"
+
+    # makesure path is created if nonexistent
+    data_dir = Path(output_dir)
+    data_dir.mkdir(parents=True, exist_ok=True)
+
+    filename = f"yt_data_{date.today()}.json"
+    file_path = data_dir / filename
 
     with open(file_path, "w", encoding="utf-8") as json_outfile:
         json.dump(extracted_data, json_outfile, indent=4, ensure_ascii=False)

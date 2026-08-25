@@ -1,6 +1,5 @@
-import requests
 import json
-from datetime import date
+import os
 
 
 from utils.youtube_endpoints import get_playlist_id, get_videos_ids, extract_video_data, save_to_json
@@ -8,12 +7,14 @@ from utils.log_config import logs_config
 
 from pathlib import Path
 
-
 from airflow.decorators import task
 from airflow.models import Variable
 
 API_KEY = Variable.get("YT_API_KEY")
-CHANNEL_HANDLE = Variable.get("CHANNEL_HANDLE")
+CHANNEL_HANDLE_STR = Variable.get("CHANNEL_HANDLE")
+
+CHANNEL_HANDLE = json.loads(CHANNEL_HANDLE_STR)
+
 maxResults = 50
 
 
@@ -22,6 +23,7 @@ def dag_playlist_id():
     playlist_id = []
 
     for item in CHANNEL_HANDLE:
+
         playlist_id.append(get_playlist_id(item, API_KEY))
 
     return playlist_id
@@ -46,7 +48,11 @@ def dag_extract_video_data(videos_ids):
 
 @task
 def dag_save_to_json(extracted_data):
-    DATA_DIR = Path.cwd().parent / "data"
+    AIRFLOW_HOME = Path(os.getenv("AIRFLOW_HOME", "/opt/airflow"))
+
+    DATA_DIR = AIRFLOW_HOME / "data"
+
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     save_to_json(extracted_data, DATA_DIR)
 
