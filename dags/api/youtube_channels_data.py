@@ -2,7 +2,8 @@ import json
 import os
 
 
-from utils.youtube_endpoints import get_playlist_id, get_videos_ids, extract_video_data, save_to_json
+from api.youtube_channels_endpoint import get_playlist_id, get_videos_ids, extract_video_data, save_to_json
+from api.data_utils import load_json_to_postgres
 from utils.log_config import logs_config
 
 from pathlib import Path
@@ -47,12 +48,14 @@ def dag_extract_video_data(videos_ids):
 
 
 @task
-def dag_save_to_json(extracted_data):
+def dag_save_to_json(data_origin, extracted_data):
     AIRFLOW_HOME = Path(os.getenv("AIRFLOW_HOME", "/opt/airflow"))
 
-    DATA_DIR = AIRFLOW_HOME / "data"
+    DATA_DIR = AIRFLOW_HOME / "data" / f"{data_origin}"
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    load_json_to_postgres(extracted_data, data_origin)
 
     save_to_json(extracted_data, DATA_DIR)
 
@@ -61,6 +64,6 @@ if __name__ == "__main__":
     playlistID = dag_playlist_id()
     video_ids = dag_videos_ids(playlistID)
     video_data = dag_extract_video_data(video_ids)
-    dag_save_to_json(video_data)
+    dag_save_to_json("videos_data", video_data)
 else:
     print("dag_playlist_id won't be executed")

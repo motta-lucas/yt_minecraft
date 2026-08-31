@@ -46,7 +46,7 @@ with DAG(
     playlist_id = dag_playlist_id()
     video_ids = dag_videos_ids(playlist_id)
     extract_data = dag_extract_video_data(video_ids)
-    save_to_json_task = dag_save_to_json(extract_data)
+    save_to_json_task = dag_save_to_json("videos_data", extract_data)
 
     # trigger_update_db = TriggerDagRunOperator(
     # task_id="trigger_update_db",
