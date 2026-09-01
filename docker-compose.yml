@@ -94,6 +94,9 @@ x-airflow-common:
     POSTGRES_CONN_PORT: ${POSTGRES_CONN_PORT}
     DBT_TARGET: ${DBT_TARGET}
     PYTHONPATH: /opt/airflow/src
+    PYTHONNOUSERSITE: "1"
+    PATH: /usr/local/bin:/usr/bin:/bin
+
   volumes:
     - ./config:/opt/airflow/config
     - ./dags:/opt/airflow/dags
@@ -102,7 +105,7 @@ x-airflow-common:
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
     - ./tests:/opt/airflow/tests
-    - ./dbt:/opt/airflow/dbt
+    #- ./dbt:/opt/airflow/dbt #I am having issues with dbt, so I'll mount it on a separated service
   user: "${AIRFLOW_UID}:0"
   depends_on:
     &airflow-common-depends-on
@@ -148,6 +151,8 @@ services:
     command: >
       postgres
       -c listen_addresses='*'
+    networks:
+      - airflow-net
 
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
@@ -163,6 +168,28 @@ services:
       retries: 50
       start_period: 30s
     restart: always
+    networks:
+      - airflow-net
+
+  dbt:
+    image: ghcr.io/dbt-labs/dbt-postgres:1.7.0
+    container_name: dbt
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DBT_PROFILES_DIR: /usr/app/profiles
+      DBT_PROJECT_DIR: /usr/app/yt_minecraft_dbt
+      DBT_TARGET: ${DBT_TARGET}
+    volumes:
+      - ./dbt:/usr/app
+      - ./dbt/profiles:/usr/app/profiles
+    working_dir: /usr/app
+    networks:
+      - airflow-net
+
 
   airflow-webserver:
     <<: *airflow-common
@@ -181,6 +208,8 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    networks:
+      - airflow-net
 
   airflow-scheduler:
     <<: *airflow-common
@@ -197,6 +226,10 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - airflow-net
 
   airflow-worker:
     <<: *airflow-common
@@ -222,7 +255,10 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - airflow-net
   # airflow-triggerer:
   #   <<: *airflow-common
   #   command: triggerer
@@ -301,6 +337,8 @@ services:
     user: "0:0"
     volumes:
       - .:/sources
+    networks:
+      - airflow-net
 
   airflow-cli:
     <<: *airflow-common
@@ -314,6 +352,8 @@ services:
       - bash
       - -c
       - airflow
+    networks:
+      - airflow-net
 
   # # You can enable flower by adding "--profile flower" option e.g. docker-compose --profile flower up
   # # or by explicitly targeted on the command line e.g. docker-compose up flower.
@@ -340,3 +380,7 @@ services:
 
 volumes:
   postgres-db-volume:
+
+networks:
+  airflow-net:
+    name: airflow-net

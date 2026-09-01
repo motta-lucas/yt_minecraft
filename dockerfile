@@ -3,6 +3,9 @@ ARG PYTHON_VERSION=3.11
 
 FROM apache/airflow:${AIRFLOW_VERSION}-python${PYTHON_VERSION}
 
+ENV PATH=/usr/local/bin:/usr/bin:/bin
+ENV PYTHONNOUSERSITE=1
+
 USER root
 
 COPY --from=ghcr.io/astral-sh/uv:0.12.5 /uv /uvx /bin/
@@ -35,6 +38,10 @@ RUN /bin/uv pip install \
 
 RUN /bin/uv pip install --no-cache-dir --system -e .
 
-USER airflow
-
 COPY --chown=airflow:root dbt/ /opt/airflow/dbt/
+
+USER root
+
+RUN rm -rf /home/airflow.local/bin/python /home/airflow/.local/bin/pip /home/airflow/.local/lib/python* || true
+
+USER airflow
