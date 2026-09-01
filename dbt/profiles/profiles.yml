@@ -1,0 +1,28 @@
+yt_minecraft_dbt:
+  target: "{{ env_var('DBT_TARGET','dev') }}"
+
+  outputs:
+
+    dev:
+
+      type: postgres
+
+      host: "{{ env_var('POSTGRES_CONN_HOST', 'postgres') }}"
+
+      user: "{{ env_var('ELT_DATABASE_USERNAME') }}"
+
+      password: "{{ env_var('ELT_DATABASE_PASSWORD') }}"
+
+      port: "{{ env_var('POSTGRES_CONN_PORT', '5432') | as_number }}"
+
+      dbname: "{{ env_var('ELT_DATABASE_NAME') }}"
+
+      schema: staging_dbt
+
+      threads: 4
+
+      search_path: public,raw,staging_dbt
+
+      keepalives_idle: 0
+
+      connect_timeout: 10
