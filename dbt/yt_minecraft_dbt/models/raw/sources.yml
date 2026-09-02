@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: videos_data_json
+        description: Raw Payload from API as JSONB
+        columns:
+          - name: id
+            testes: [not_null,unique]
+          - name: data
+            tests: [not_null]
+          - name: _extracted_at
+            tests: [not_null]

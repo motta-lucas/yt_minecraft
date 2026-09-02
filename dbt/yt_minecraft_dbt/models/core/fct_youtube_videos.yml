@@ -1,0 +1,7 @@
+version: 2
+
+models:
+  - name: fct_youtube_videos
+    columns:
+      - name: video_id
+        tests: [not_null]
