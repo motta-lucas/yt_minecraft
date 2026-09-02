@@ -72,6 +72,9 @@ x-airflow-common:
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
     # Enable health checks for the scheduler
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
+    AIRFLOW__WEBSERVER__BASE_URL: http://localhost:8080
+    AIRFLOW__CELERY__WORKER_LOG_SERVER_PORT: "8793"
+    AIRFLOW__CELERY__WORKER_LOG_SERVER_HOST: airflow-worker-minecraft
     # Setting Airflow Connections and Variables
     # NOTE 1: These will not show up on Airflow UI or using airflow connections/ variables list 
     # However, functions such as Variable.get() will still work as per Airflow docs as long as
@@ -227,6 +230,13 @@ services:
       airflow-init:
         condition: service_completed_successfully
     volumes:
+      - ./config:/opt/airflow/config
+      - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
+      - ./include:/opt/airflow/include
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./tests:/opt/airflow/tests
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - airflow-net
@@ -256,6 +266,13 @@ services:
       airflow-init:
         condition: service_completed_successfully
     volumes:
+      - ./config:/opt/airflow/config
+      - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
+      - ./include:/opt/airflow/include
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./tests:/opt/airflow/tests
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - airflow-net

@@ -18,7 +18,7 @@ yt_minecraft_dbt:
       dbname: "{{ env_var('ELT_DATABASE_NAME') }}"
 
       schema: staging_dbt
-
+      
       threads: 4
 
       search_path: public,raw,staging_dbt
