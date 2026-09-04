@@ -4,6 +4,38 @@ import json
 from pathlib import Path
 
 
+def get_channel_stats(channel_handle, api_key):
+    extracted_data = []
+    try:
+        url = f"https://youtube.googleapis.com/youtube/v3/channels?part=statistics&forHandle={channel_handle}&key={api_key}"
+
+        response = requests.get(url)
+
+        response.raise_for_status()
+
+        data = response.json()
+
+        for item in data.get("items", []):
+            channel_id = item["id"]
+            statistics = item["statistics"]
+
+            channel_data = {
+                "channel_id": channel_id,
+                "viewCount": statistics.get("viewCount", None),
+                "subscriberCount": statistics.get("subscriberCount", None),
+                "videoCount": statistics.get("videoCount", None),
+            }
+
+            extracted_data.append(channel_data)
+
+        print(f"channel detail: {extracted_data}")
+
+        return extracted_data
+
+    except requests.exceptions.RequestException as e:
+        raise e
+
+
 def get_playlist_id(channel_handle, api_key):
     try:
         url = f"https://youtube.googleapis.com/youtube/v3/channels?part=contentDetails&forHandle={channel_handle}&key={api_key}"

@@ -1,32 +1,32 @@
 
-  create view "elt_db_minecraft"."staging_dbt_core_dbt"."fct_youtube_videos__dbt_tmp"
+      
+  
     
-    
-  as (
-    with base as (
-    select *
-    from "elt_db_minecraft"."staging_dbt_staging_dbt"."stg_youtube_videos"
-),
 
-dedup as (
-    select
-        *,
-        row_number() over (
-            partition by video_id
-            order by _extracted_at desc, raw_id desc
-        ) as rn
-    from base
+  create  table "elt_db_minecraft"."core_dbt"."fct_youtube_videos"
+  
+  
+    as
+  
+  (
+    
+
+with base as (
+    select *
+    from "elt_db_minecraft"."staging_dbt"."stg_youtube_videos"
+    
 )
 
 select
-    _extracted_at as as_of_ts,
     video_id,
-    title,
+    _extracted_at as collected_at,
     published_at,
     duration_seconds,
     view_count,
     like_count,
     comment_count
-from dedup
-where rn = 1
+from base
+where video_id is not null
   );
+  
+  

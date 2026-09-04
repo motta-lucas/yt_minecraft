@@ -48,4 +48,7 @@ RUN /bin/uv pip install \
 
 RUN rm -rf /home/airflow.local/bin/python /home/airflow/.local/bin/pip /home/airflow/.local/lib/python* || true
 
+RUN /usr/sbin/groupadd -f -g 1001 docker && \
+    /usr/sbin/usermod -aG docker airflow
+
 USER airflow

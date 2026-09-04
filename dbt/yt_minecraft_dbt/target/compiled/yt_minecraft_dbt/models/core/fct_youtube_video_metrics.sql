@@ -10,7 +10,6 @@ select
     video_id,
     _extracted_at as collected_at,
     published_at,
-    duration_seconds,
     view_count,
     like_count,
     comment_count

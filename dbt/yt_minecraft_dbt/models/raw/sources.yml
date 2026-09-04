@@ -8,7 +8,9 @@ sources:
         description: Raw Payload from API as JSONB
         columns:
           - name: id
-            testes: [not_null,unique]
+            tests: [not_null,unique]
+          - name: video_id
+            tests: [not_null]
           - name: data
             tests: [not_null]
           - name: _extracted_at

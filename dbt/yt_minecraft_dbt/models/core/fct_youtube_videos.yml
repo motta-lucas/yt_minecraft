@@ -2,6 +2,9 @@ version: 2
 
 models:
   - name: fct_youtube_videos
+    description: Videos' metrics by ingestion (performance history)
     columns:
       - name: video_id
+        tests: [not_null]
+      - name: collected_at
         tests: [not_null]

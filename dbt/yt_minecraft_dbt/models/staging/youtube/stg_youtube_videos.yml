@@ -2,7 +2,10 @@ version: 2
 
 models:
   - name: stg_youtube_videos
+    description: Typed and Incremental Videos' data
     columns:
+      - name: raw_id
+        tests: [not_null, unique]
       - name: video_id
         tests: [not_null]
       - name: _extracted_at

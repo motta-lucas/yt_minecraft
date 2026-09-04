@@ -1,17 +1,19 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key=['video_id','collected_at'],
+        incremental_strategy='delete+insert'
+    )
+}}
+
 with base as (
     select *
     from {{ ref('stg_youtube_videos')}}
-    where video_id is not null
-),
-
-dedup as (
-    select
-        *,
-        row_number() over (
-            partition by video_id, _extracted_at
-            order by raw_id desc
-        ) as rn
-    from base
+    {%if is_incremental()%}
+    where _extracted_at >(
+        select max(collected_at) from {{ this }}
+    )
+    {% endif %}
 )
 
 select
@@ -21,5 +23,5 @@ select
     view_count,
     like_count,
     comment_count
-from dedup
-where rn = 1
+from base
+where video_id is not null

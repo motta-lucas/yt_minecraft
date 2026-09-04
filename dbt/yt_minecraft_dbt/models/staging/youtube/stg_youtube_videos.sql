@@ -1,3 +1,11 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key='raw_id',
+        incremental_strategy='append'
+    )
+}}
+
 with src as(
     select
         id as raw_id,
@@ -5,6 +13,12 @@ with src as(
         _extracted_at,
         data
     from {{ source('raw','videos_data_json')}}
+
+    {%if is_incremental()%}
+    where _extracted_at > (
+        select max(_extracted_at) from {{ this }}
+    )
+    {% endif %}
 ),
 
 typed as (

@@ -8,18 +8,27 @@ from yt_minecraft.db.raw_schema import ensure_raw_table
 def load_json_to_postgres(cur, conn, data, data_origin):
 
     table_mapping = {
-        "yt_data": "videos_data_json",
+        "videos_data": ("videos_data_json", "video_id"),
+        "channels_data": ("channels_data_json", "channel_id"),
     }
 
-    table_name = table_mapping.get(data_origin, f"{data_origin}_json")
+    table_name, key_column = table_mapping.get(data_origin, (f"{data_origin}_json", "id"))
 
     create_schema(cur, "raw")
 
-    ensure_raw_table(cur, table_name)
+    ensure_raw_table(cur, table_name, key_column)
 
     def insert_item(item: dict):
-        vid = item.get("video_id") or item.get("id")
-        cur.execute(f"INSERT INTO raw.{table_name} (video_id,data) VALUES (%s, %s)", (vid, json.dumps(item)))
+        vid = item.get(key_column) or item.get("id")
+        cur.execute(
+            f"INSERT INTO raw.{table_name} ({key_column},data) VALUES (%s, %s)", (vid, json.dumps(item))
+        )
+
+    # Clean old data
+    cur.execute(f"""
+        DELETE FROM raw.{table_name}
+            WHERE _extracted_at < CURRENT_DATE - INTERVAL '7 days'
+        """)
 
     # Insert data
     if isinstance(data, dict):
