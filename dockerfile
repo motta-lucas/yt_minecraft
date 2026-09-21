@@ -32,6 +32,8 @@ RUN chown -R airflow:root /opt/airflow
 
 # Airflow Constraints (always major.minor in python)
 ENV AIRFLOW_CONSTRAINTS_URL=https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION_CONSTRAINTS}.txt
+
+# Prints the "AIRFLOW_CONSTRAINTS_URL" for information and debbuging if necessary
 RUN echo ${AIRFLOW_CONSTRAINTS_URL}
 
 # Copy necessary files from project to pip install

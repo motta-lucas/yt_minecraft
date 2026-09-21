@@ -382,6 +382,7 @@ services:
         fi
         mkdir -p /sources/dags /sources/data /sources/dbt /sources/include /sources/logs /sources/tests
         chown -R "${AIRFLOW_UID}:0" /sources/{dags,data,dbt,include,logs,tests}
+        chmod -R g+w /sources/{data,logs}
         exec /entrypoint airflow version
     # yamllint enable rule:line-length
     environment:

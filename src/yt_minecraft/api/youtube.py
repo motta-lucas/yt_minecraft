@@ -1,5 +1,5 @@
 import requests
-from datetime import date
+from datetime import date, datetime
 import json
 from pathlib import Path
 
@@ -137,13 +137,27 @@ def extract_video_data(video_ids, api_key, maxResults):
         raise e
 
 
-def save_to_json(extracted_data, output_dir):
+def get_recent_videos(cur, schema, table):
+    cur.execute(f"""
+                SELECT DISTINCT video_id FROM {schema}.{table} WHERE published_at >= NOW() - INTERVAL '48 hours';
+                """)
+    ids = cur.fetchall()
+
+    vid_ids = [row["video_id"] for row in ids]
+
+    return vid_ids
+
+
+def save_to_json(extracted_data, output_dir, timestamped=False):
 
     # makesure path is created if nonexistent
     data_dir = Path(output_dir)
     data_dir.mkdir(parents=True, exist_ok=True)
 
-    filename = f"yt_data_{date.today()}.json"
+    if timestamped:
+        filename = f"yt_data_{datetime.now():%Y%m%d_%H%M%S}.json"
+    else:
+        filename = f"yt_data_{date.today()}.json"
     file_path = data_dir / filename
 
     with open(file_path, "w", encoding="utf-8") as json_outfile:

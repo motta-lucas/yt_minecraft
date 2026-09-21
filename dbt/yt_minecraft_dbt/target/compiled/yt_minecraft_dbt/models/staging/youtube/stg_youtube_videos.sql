@@ -9,6 +9,10 @@ with src as(
     from "elt_db_minecraft"."raw"."videos_data_json"
 
     
+    where _extracted_at > (
+        select max(_extracted_at) from "elt_db_minecraft"."staging_dbt"."stg_youtube_videos"
+    )
+    
 ),
 
 typed as (
