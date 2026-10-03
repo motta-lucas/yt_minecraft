@@ -208,7 +208,7 @@ services:
       - airflow-net
 
   minio:
-    image: minio/minio:latest
+    image: quay.io/minio/minio:latest
     container_name: minio
     command: server /data --console-address ":9001"
     environment:
